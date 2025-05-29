@@ -5,7 +5,7 @@ pycache/
 *.csv
 
 *.db
-
+*sqlite3
 *.sqlite
 .venv/**
 .venv/
