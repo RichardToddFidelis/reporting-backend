@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.utils import timezone
 
 # Validators for latitude and longitude
 
@@ -33,6 +34,8 @@ class EventGroup(models.Model):
         related_name="event_groups",
         db_table="_jt_eventgroup_events",  # Specify junction table name directly
     )
+    created = models.DateTimeField(default=timezone.now)
+    updated = models.DateTimeField(auto_now=True)
 
 
 class RingEvent(Event):

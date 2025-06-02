@@ -1,18 +1,20 @@
+from api.schemas import ErrorSchema
+from api.controllers.report import report_router
+from api.controllers.event import event_router
+from api.controllers.job import job_router
 import logging
 from django.urls import path
 from ninja import NinjaAPI
 from django.http import Http404
 from django.core.exceptions import ValidationError
-from api.controllers.jobs import job_router
-from api.controllers.events import event_router
-from api.controllers.reports import report_router
-from schemas import ErrorSchema
+
+print("Importing routers")
 
 # Configure logger
 logger = logging.getLogger(__name__)
 
 # Initialize NinjaAPI
-api = NinjaAPI()
+api = NinjaAPI(docs_url="/docs/", title="Reporting Backend API")
 
 # Global exception handler for all routers
 
@@ -44,5 +46,5 @@ api.add_router("/jobs/", job_router)
 
 # URL patterns
 urlpatterns = [
-    path("api/", api.urls),  # Include API URLs under /api/
+    path("", api.urls),  # Include API URLs under /api/
 ]

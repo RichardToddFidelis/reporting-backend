@@ -1,5 +1,6 @@
 from ninja import Schema
-from pydantic.types import Literal
+from pydantic.types import Literal, datetime
+from typing import List
 
 
 class JobSchemaIn(Schema):
@@ -9,3 +10,16 @@ class JobSchemaIn(Schema):
 
 class JobStatusUpdateSchemaIn(Schema):
     status: Literal["PENDING", "RUNNING", "COMPLETED", "FAILED"]
+
+
+class JobSchemaOut(JobSchemaIn):
+    created: datetime
+    updated: datetime
+
+
+class PaginatedJobSchemaOut(Schema):
+    items: List[JobSchemaOut]
+    total: int
+    page: int
+    per_page: int
+    total_pages: int

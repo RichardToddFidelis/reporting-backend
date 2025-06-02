@@ -3,8 +3,8 @@ from ninja import Router
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator, InvalidPage
-from myapp.models import Report, ReportModifier, EventGroup
-from myapp.schemas import (
+from api.models import Report, ReportModifier, EventGroup
+from api.schemas import (
     ReportSchemaIn,
     ReportSchemaOut,
     ReportModifierSchemaIn,
@@ -16,7 +16,7 @@ from myapp.schemas import (
 # Configure logger
 logger = logging.getLogger(__name__)
 
-report_router = Router()
+report_router = Router(tags=["Report"])
 
 
 @report_router.post("/reports/", response={201: ReportSchemaOut, 422: ErrorSchema})
@@ -103,4 +103,3 @@ def create_report_modifier(request, data: ReportModifierSchemaIn):
 def get_report_modifier(request, id: int):
     modifier = get_object_or_404(ReportModifier, id=id)
     return 200, modifier
-

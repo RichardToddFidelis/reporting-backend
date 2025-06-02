@@ -1,10 +1,10 @@
+# reporting-backend/api/schemas/event.py
 from ninja import Schema
-from pydantic import field_validator, Field
-from typing import Optional
+from pydantic import field_validator, Field, ValidationInfo
+from typing import Optional, List
+
 
 # Base schema for common Event fields (used in input schemas)
-
-
 class EventSchemaIn(Schema):
     name: str = Field(..., max_length=255)
     description: str = Field(..., max_length=255)
@@ -12,8 +12,6 @@ class EventSchemaIn(Schema):
 
 
 # Base schema for common Event fields (used in output schemas)
-
-
 class EventSchemaOut(Schema):
     id: int
     name: str
@@ -22,8 +20,6 @@ class EventSchemaOut(Schema):
 
 
 # RingEvent Schemas
-
-
 class RingEventSchemaIn(EventSchemaIn):
     latitude: float
     longitude: float
@@ -51,8 +47,6 @@ class RingEventSchemaOut(EventSchemaOut):
 
 
 # BoxEvent Schemas
-
-
 class BoxEventSchemaIn(EventSchemaIn):
     max_lat: float
     min_lat: float
@@ -75,15 +69,15 @@ class BoxEventSchemaIn(EventSchemaIn):
 
     @field_validator("max_lat")
     @classmethod
-    def validate_max_lat(cls, value: float, values: dict) -> float:
-        if "min_lat" in values and value <= values["min_lat"]:
+    def validate_max_lat(cls, value: float, info: ValidationInfo) -> float:
+        if info.data.get("min_lat") is not None and value <= info.data["min_lat"]:
             raise ValueError("max_lat must be greater than min_lat.")
         return value
 
     @field_validator("max_lon")
     @classmethod
-    def validate_max_lon(cls, value: float, values: dict) -> float:
-        if "min_lon" in values and value <= values["min_lon"]:
+    def validate_max_lon(cls, value: float, info: ValidationInfo) -> float:
+        if info.data.get("min_lon") is not None and value <= info.data["min_lon"]:
             raise ValueError("max_lon must be greater than min_lon.")
         return value
 
@@ -96,8 +90,6 @@ class BoxEventSchemaOut(EventSchemaOut):
 
 
 # GeoEvent Schemas
-
-
 class GeoEventSchemaIn(EventSchemaIn):
     country: Optional[str] = Field(None, max_length=255)
     area: Optional[str] = Field(None, max_length=255)
@@ -110,3 +102,16 @@ class GeoEventSchemaOut(EventSchemaOut):
     area: Optional[str]
     subarea: Optional[str]
     subarea2: Optional[str]
+
+
+class EventGroupCreateSchemaIn(Schema):
+    name: str = ""  # Optional group name
+    event_ids: List[int]  # List of event IDs
+
+
+class EventGroupSchemaOut(Schema):
+    id: int
+    name: str
+    event_ids: List[int]
+    created: str
+    updated: str
