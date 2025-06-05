@@ -1,18 +1,17 @@
+# reporting-backend/api/models/report.py
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from .event import EventGroup
 import re
-
 from django.core.validators import MinValueValidator, MaxValueValidator
-
 
 def validate_cron(value):
     if not re.match(
-        r"^[0-9*/,-]+\s+[0-9*/,-]+\s+[0-9*/,-]+\s+[0-9*/,-]+\s+[0-9*/,-]+$", value
+        r"^[0-9*/,-]+\s+[0-9*/,-]+\s+[0-9*/,-]+\s+[0-9*/,-]+\s+[0-9*/,-]+$",
+        value
     ):
         raise ValidationError("Invalid cron syntax")
-
 
 class Report(models.Model):
     id = models.AutoField(primary_key=True)
@@ -49,9 +48,7 @@ class Report(models.Model):
     no_overlap_radius = models.FloatField(null=True)
     is_valid = models.BooleanField(default=True)
     created = models.DateTimeField(default=timezone.now)
-    updated = models.DateTimeField(
-        default=timezone.now
-    )  # onupdate is handled in save()
+    updated = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return f"Report {self.id}"
@@ -62,14 +59,17 @@ class Report(models.Model):
 
     class Meta:
         db_table = "reports"
-
+        app_label='api'
 
 class ReportModifier(models.Model):
     id = models.AutoField(primary_key=True)
     as_at_date = models.DateField(null=True)
     fx_date = models.DateField(null=True)
-    report = models.ForeignKey(
-        Report, on_delete=models.CASCADE, related_name="modifiers"
+    reports = models.ManyToManyField(
+        Report,
+        related_name="modifiers",
+        db_table="_jt_report_modifiers_reports",
+        blank=True,
     )
 
     @property
@@ -94,4 +94,3 @@ class ReportModifier(models.Model):
     class Meta:
         db_table = "report_modifiers"
         app_label = "api"
-        unique_together = [["report", "as_at_date"]]

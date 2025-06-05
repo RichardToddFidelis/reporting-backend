@@ -43,7 +43,6 @@ class RingEventSchemaIn(EventSchemaIn):
 class RingEventSchemaOut(EventSchemaOut):
     latitude: float
     longitude: float
-    radius: float
 
 
 # BoxEvent Schemas
@@ -115,3 +114,12 @@ class EventGroupSchemaOut(Schema):
     event_ids: List[int]
     created: str
     updated: str
+
+
+class EventGroupWithEventsSchemaOut(Schema):
+    event_group: EventGroupSchemaOut
+    events: List[EventSchemaOut]
+
+
+class ErrorSchema(Schema):
+    message: str

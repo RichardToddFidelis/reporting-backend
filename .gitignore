@@ -9,3 +9,5 @@ pycache/
 *.sqlite
 .venv/**
 .venv/
+.venv
+
