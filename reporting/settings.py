@@ -1,4 +1,3 @@
-# reporting-backend/reporting/settings.py
 """
 Django settings for reporting project.
 ...
@@ -22,11 +21,35 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "ninja",
-    "api",
     "corsheaders",
     "django_extensions",
+    "rest_framework",
+    "drf_spectacular",
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 100,
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Reporting API',
+    'DESCRIPTION': 'API for the Reporting project',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SWAGGER_UI_SETTINGS': {
+        'deepLinking': True,
+    },
+    'COMPONENT_SPLIT_REQUEST': True,
+}
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
@@ -136,12 +159,12 @@ LOGGING = {
         },
     },
     "loggers": {
-        "api": {  # Capture all api.* modules
+        "api": {
             "handlers": ["file", "console"],
             "level": "DEBUG",
             "propagate": False,
         },
-        "": {  # Root logger for unhandled logs
+        "": {
             "handlers": ["file", "console"],
             "level": "DEBUG",
             "propagate": True,
